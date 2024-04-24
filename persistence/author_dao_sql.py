@@ -52,8 +52,48 @@ class AuthorDaoSql(AuthorDao):
 
 
     def find_by_username(self, username):
-        # TODO: completar
-        return None
+        author = None
+
+        try:
+            conn = connection_manager.get_connection()
+
+            # creamos un cursor para ejecutar la consulta. La parte de
+            # "cursor_factory=DictCursor" es para que los resultados se devuelvan
+            # como diccionarios, en lugar de tuplas a las que tenemos que acceder
+            # con índices numéricos
+            cursor = conn.cursor(cursor_factory=DictCursor)
+
+            # En python, los parámetros se pasan directamente en el comando de
+            # ejecución de una consulta, en lugar de "preparar" la consulta mediante
+            # un PreparedStatement como en Java. También, para indicar los
+            # parámetros, se utiliza % en lugar de ?, indicando el tipo
+
+            # https://www.psycopg.org/docs/usage.html#query-parameters
+
+            query = ("""
+                     select author_id, username, email from author where author_id = %s
+                     """)
+            parameters = [username]
+
+            # Para ejecutar, el primer parámetro sería la consulta, y el segundo una
+            # lista con los valores de los parámetros
+            cursor.execute(query, parameters)
+
+            # si hay un resultado, lo procesamos y mapeamos a un objeto Cliente
+            result = cursor.fetchone()
+            if (result is not None):
+                author = self.map_author(result)
+
+            # terminado el procesado, podemos cerrar la conexión y la consulta
+            cursor.close()
+            conn.close()
+        except psycopg2.Error as e:
+            # no deberíamos hacer solo un print, pero así vemos cuál ha sido el problema
+            print("ERROR:\n{0}".format(e))
+
+        return username
+        
+
 
 
     def find_authors(self):

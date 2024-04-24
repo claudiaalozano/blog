@@ -13,8 +13,8 @@ class AuthorManager:
         return self.author_dao.find_by_id(author_id)
 
     def find_by_username(self, username):
-        # TODO: completar
-        return None
+        
+        return self.author_dao.find_by_username(username)
 
     def find_authors(self):
         return self.author_dao.find_authors()
