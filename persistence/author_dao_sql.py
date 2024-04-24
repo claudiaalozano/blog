@@ -71,7 +71,7 @@ class AuthorDaoSql(AuthorDao):
             # https://www.psycopg.org/docs/usage.html#query-parameters
 
             query = ("""
-                     select author_id, username, email from author where author_id = %s
+                     select author_id, username, email from author where username = %s
                      """)
             parameters = [username]
 
@@ -91,7 +91,7 @@ class AuthorDaoSql(AuthorDao):
             # no deberíamos hacer solo un print, pero así vemos cuál ha sido el problema
             print("ERROR:\n{0}".format(e))
 
-        return username
+        return author
         
 
 
