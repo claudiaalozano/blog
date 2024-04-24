@@ -16,5 +16,5 @@ class BlogManager:
         return self.blog_dao.find_by_id_with_author(id)
 
     def find_by_id_with_author_and_posts(self, id):
-        # TODO: completar
-        return None
+        return self.blog_dao.find_by_id_with_author_and_posts(id)
+        

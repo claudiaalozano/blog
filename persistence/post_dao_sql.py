@@ -28,7 +28,7 @@ class PostDaoSql(PostDao):
             # https://www.psycopg.org/docs/usage.html#query-parameters
 
             query = ("""
-                     select post_id, subject, body, blog_id from author where post_id = %s
+                     select post_id, subject, body, blog_id from post where post_id = %s
                      """)
             parameters = [post_id]
 
@@ -39,7 +39,7 @@ class PostDaoSql(PostDao):
             # si hay un resultado, lo procesamos y mapeamos a un objeto Cliente
             result = cursor.fetchone()
             if (result is not None):
-                author = self.map_post(result)
+                post = self.map_post(result)
 
             # terminado el procesado, podemos cerrar la conexión y la consulta
             cursor.close()
@@ -100,8 +100,8 @@ class PostDaoSql(PostDao):
             cursor = conn.cursor()
 
             # preparamos la consulta y sus parámetros
-            query = """ insert into author(author_id, username, email)
-                        values (%s, %s, %s) """
+            query = """ insert into post(post_id, subject, body, blog_id)
+                        values (%s, %s, %s, %s) """
             parameters = (post.get_post_id(), post.get_subject(), post.get_body(), post.get_blog_id())
 
             # ejecutamos la consulta
@@ -179,3 +179,12 @@ class PostDaoSql(PostDao):
             print("ERROR:\n{0}".format(e))
 
         return result
+
+
+    def map_post(self, result):
+        """
+        Devuelve un objeto autor con los datos del resultado de la consulta
+        """
+        return Post(id=result['post_id'],
+                      subject=result['subject'],
+                      body=result['body'])
